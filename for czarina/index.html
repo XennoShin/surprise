@@ -1,0 +1,1394 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>A Special Surprise For You</title>
+    <!-- Tailwind CSS for responsive layout & utility classes -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Quicksand & Dancing Script for cute & romantic typography -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@600;700&family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        /* Custom Base Styles & Animations */
+        :root {
+            --pink-light: #fff0f5;
+            --pink-soft: #ffd6e7;
+            --pink-medium: #ff8fab;
+            --pink-deep: #fb6f92;
+            --pink-accent: #e05279;
+        }
+
+        body {
+            font-family: 'Quicksand', sans-serif;
+            background: linear-gradient(135deg, #ffe5ec 0%, #ffc2d1 50%, #ffb3c6 100%);
+            min-height: 100vh;
+            overflow-x: hidden;
+            color: #592e3b;
+            user-select: none;
+        }
+
+        .font-romantic {
+            font-family: 'Dancing Script', cursive;
+        }
+
+        /* Floating Background Hearts */
+        .floating-hearts-bg {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: 0;
+            overflow: hidden;
+        }
+
+        .bg-heart {
+            position: absolute;
+            bottom: -50px;
+            color: rgba(255, 255, 255, 0.55);
+            animation: floatUp linear infinite;
+        }
+
+        @keyframes floatUp {
+            0% {
+                transform: translateY(0) rotate(0deg) scale(0.8);
+                opacity: 0;
+            }
+            20% {
+                opacity: 0.8;
+            }
+            80% {
+                opacity: 0.8;
+            }
+            100% {
+                transform: translateY(-110vh) rotate(360deg) scale(1.2);
+                opacity: 0;
+            }
+        }
+
+        /* Stage Transitions */
+        .stage {
+            display: none;
+            opacity: 0;
+            transform: translateY(15px) scale(0.98);
+            transition: opacity 0.7s cubic-bezier(0.22, 1, 0.36, 1), transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+            z-index: 10;
+        }
+
+        .stage.active {
+            display: flex;
+            opacity: 1;
+            transform: translateY(0) scale(1);
+        }
+
+        /* Cute Glass Card */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.78);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+            border: 2px solid rgba(255, 255, 255, 0.9);
+            box-shadow: 0 20px 45px rgba(251, 111, 146, 0.22), inset 0 0 20px rgba(255, 255, 255, 0.6);
+        }
+
+        /* Cute Bubble Button */
+        .btn-cute {
+            background: linear-gradient(135deg, #ff8fab 0%, #fb6f92 100%);
+            color: white;
+            box-shadow: 0 8px 20px rgba(251, 111, 146, 0.4), inset 0 2px 2px rgba(255, 255, 255, 0.5);
+            transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        /* Persistent Top-Left Back Button */
+        .back-btn {
+            position: fixed;
+            top: 1.15rem;
+            left: 1.15rem;
+            z-index: 50;
+            background: rgba(255, 255, 255, 0.78);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 2px solid rgba(255, 179, 198, 0.85);
+            color: #d6456b;
+            box-shadow: 0 8px 20px rgba(251, 111, 146, 0.2);
+            transition: opacity 0.35s ease, transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1), background-color 0.2s ease;
+        }
+
+        .back-btn.hidden-back {
+            opacity: 0;
+            pointer-events: none;
+            transform: translateX(-14px) scale(0.92);
+        }
+
+        .back-btn:not(.hidden-back):hover {
+            background: rgba(255, 255, 255, 0.96);
+            transform: translateY(-2px) scale(1.04);
+            box-shadow: 0 10px 24px rgba(251, 111, 146, 0.32);
+        }
+
+        .back-btn:not(.hidden-back):active {
+            transform: translateY(1px) scale(0.96);
+        }
+
+        .btn-cute:hover:not(:disabled) {
+            transform: translateY(-3px) scale(1.03);
+            box-shadow: 0 12px 25px rgba(251, 111, 146, 0.55), inset 0 2px 3px rgba(255, 255, 255, 0.7);
+        }
+
+        .btn-cute:active:not(:disabled) {
+            transform: translateY(1px) scale(0.97);
+        }
+
+        .btn-cute:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            filter: grayscale(30%);
+        }
+
+        /* Stage 1: Giggling Cat Animations */
+        @keyframes catGiggle {
+            0%, 100% { transform: translateY(0) rotate(0deg) scale(1, 1); }
+            25% { transform: translateY(-6px) rotate(-3deg) scale(1.03, 0.97); }
+            50% { transform: translateY(0) rotate(0deg) scale(0.98, 1.02); }
+            75% { transform: translateY(-6px) rotate(3deg) scale(1.03, 0.97); }
+        }
+
+        @keyframes pawCover {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-5px) rotate(8deg); }
+        }
+
+        @keyframes giggleBubble {
+            0% { opacity: 0; transform: translateY(10px) scale(0.7); }
+            30% { opacity: 1; transform: translateY(0) scale(1.05); }
+            70% { opacity: 1; transform: translateY(-5px) scale(1); }
+            100% { opacity: 0; transform: translateY(-15px) scale(0.8); }
+        }
+
+        .cat-bounce {
+            animation: catGiggle 0.55s infinite ease-in-out;
+            transform-origin: bottom center;
+        }
+
+        .paw-giggle {
+            animation: pawCover 0.28s infinite alternate ease-in-out;
+        }
+
+        .giggle-text-1 { animation: giggleBubble 2.2s infinite ease-in-out; }
+        .giggle-text-2 { animation: giggleBubble 2.2s infinite ease-in-out 1.1s; }
+
+        /* Stage 2: Heart Padlock */
+        .shackle {
+            transition: transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+            transform-origin: 24px 85px;
+        }
+
+        .padlock-unlocked .shackle {
+            transform: translateY(-22px) rotate(-18deg);
+        }
+
+        @keyframes shakeError {
+            0%, 100% { transform: translateX(0); }
+            20%, 60% { transform: translateX(-10px); }
+            40%, 80% { transform: translateX(10px); }
+        }
+
+        .shake-lock {
+            animation: shakeError 0.45s ease-in-out;
+        }
+
+        .keypad-btn {
+            background: rgba(255, 255, 255, 0.92);
+            border: 1.5px solid #ffb3c6;
+            color: #d6456b;
+            box-shadow: 0 4px 10px rgba(251, 111, 146, 0.15);
+            transition: all 0.15s ease;
+        }
+
+        .keypad-btn:hover {
+            background: #ffe5ec;
+            transform: scale(1.06);
+        }
+
+        .keypad-btn:active {
+            transform: scale(0.94);
+            background: #ffccd5;
+        }
+
+        /* Stage 3: Spinning Vinyl Disc */
+        @keyframes spinVinyl {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .vinyl-spinning {
+            animation: spinVinyl 6s linear infinite;
+        }
+
+        /* Stage 4: 3D Envelope & Scrollable Letter */
+        .envelope-scene {
+            perspective: 1400px;
+        }
+
+        .envelope-wrapper {
+            position: relative;
+            width: 100%;
+            max-width: 460px;
+            height: 295px;
+            margin: 0 auto;
+            cursor: pointer;
+            transition: transform 0.4s ease;
+        }
+
+        .envelope-wrapper:hover:not(.opened) {
+            transform: translateY(-6px) scale(1.02);
+        }
+
+        .envelope-back {
+            position: absolute;
+            inset: 0;
+            background: #ff8fab;
+            border-radius: 20px;
+            box-shadow: 0 22px 42px rgba(224, 82, 121, 0.32);
+            z-index: 1;
+        }
+
+        /* Envelope Top Flap */
+        .envelope-flap {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 175px;
+            background: linear-gradient(180deg, #ff7597 0%, #ff9ebb 100%);
+            clip-path: polygon(0 0, 50% 95%, 100% 0);
+            border-radius: 20px 20px 0 0;
+            transform-origin: top center;
+            backface-visibility: hidden;
+            transition: transform 0.75s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.4s ease 0.35s, z-index 0.1s linear 0.35s;
+            z-index: 4;
+        }
+
+        .envelope-wrapper.opened .envelope-flap {
+            transform: rotateX(180deg);
+            opacity: 0;
+            z-index: 1;
+        }
+
+        /* Envelope Front Pocket */
+        .envelope-pocket {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, #ffb3c6 0%, #ff8fab 100%);
+            clip-path: polygon(0 0, 50% 56%, 100% 0, 100% 100%, 0 100%);
+            border-radius: 20px;
+            z-index: 3;
+            pointer-events: none;
+        }
+
+        /* Miniature Paper Popping Out Inside Envelope */
+        .envelope-letter-peek {
+            position: absolute;
+            left: 9%;
+            right: 9%;
+            bottom: 16px;
+            height: 225px;
+            background: linear-gradient(180deg, #fffdf9 0%, #fff5f8 100%);
+            border-radius: 14px;
+            padding: 18px 20px;
+            box-shadow: 0 10px 26px rgba(224, 82, 121, 0.24);
+            border: 1px solid rgba(255, 182, 193, 0.65);
+            z-index: 2;
+            opacity: 0;
+            transform: translateY(0) scale(0.96);
+            transition: transform 1.15s cubic-bezier(0.22, 1, 0.36, 1) 0.45s, opacity 0.65s ease 0.45s;
+            pointer-events: none;
+            overflow: hidden;
+            text-align: left;
+        }
+
+        .envelope-wrapper.opened .envelope-letter-peek {
+            opacity: 1;
+            transform: translateY(-76px) scale(1);
+        }
+
+        .envelope-wrapper.opened .envelope-flap {
+            transform: rotateX(180deg);
+            z-index: 1;
+        }
+
+        /* Envelope Front Pocket */
+        .envelope-pocket {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, #ffb3c6 0%, #ff8fab 100%);
+            clip-path: polygon(0 0, 50% 56%, 100% 0, 100% 100%, 0 100%);
+            border-radius: 20px;
+            z-index: 3;
+            pointer-events: none;
+        }
+
+        /* Miniature Paper Popping Out Inside Envelope */
+        .envelope-letter-peek {
+            position: absolute;
+            left: 10%;
+            right: 10%;
+            bottom: 14px;
+            height: 225px;
+            background: linear-gradient(180deg, #fffdf9 0%, #fff5f8 100%);
+            border-radius: 14px;
+            padding: 18px 20px;
+            box-shadow: 0 8px 24px rgba(224, 82, 121, 0.22);
+            border: 1px solid rgba(255, 182, 193, 0.6);
+            z-index: 2;
+            opacity: 0;
+            transform: translateY(0) scale(0.96);
+            transition: transform 1.1s cubic-bezier(0.22, 1, 0.36, 1) 0.45s, opacity 0.6s ease 0.45s;
+            pointer-events: none;
+            overflow: hidden;
+            text-align: left;
+        }
+
+        .envelope-wrapper.opened .envelope-letter-peek {
+            opacity: 1;
+            transform: translateY(-92px) scale(1);
+        }
+
+        /* Heart Seal Sticker */
+        .heart-seal {
+            position: absolute;
+            top: 52%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 5;
+            transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+            filter: drop-shadow(0 8px 16px rgba(190, 24, 68, 0.38));
+        }
+
+        .envelope-wrapper.opened .heart-seal {
+            opacity: 0;
+            transform: translate(-50%, -50%) scale(1.6);
+            pointer-events: none;
+        }
+
+        @keyframes pulseHeart {
+            0%, 100% { transform: translate(-50%, -50%) scale(1); }
+            50% { transform: translate(-50%, -50%) scale(1.12); }
+        }
+
+        .envelope-wrapper:not(.opened) .heart-seal {
+            animation: pulseHeart 1.6s infinite ease-in-out;
+        }
+
+        /* Envelope View Fade Out */
+        #envelopeView {
+            transition: opacity 0.9s ease, transform 0.9s ease;
+        }
+
+        #envelopeView.fading-out {
+            opacity: 0;
+            transform: scale(0.97) translateY(-10px);
+        }
+
+        /* Expanded Letter Paper Overlay */
+        .letter-paper-container {
+            display: none;
+            opacity: 0;
+            transform: translateY(28px) scale(0.95);
+            transition: opacity 1.4s cubic-bezier(0.22, 1, 0.36, 1), transform 1.4s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+
+        .letter-paper-container.visible {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+        }
+
+        .letter-paper {
+            background: linear-gradient(180deg, #fffdf9 0%, #fff5f8 100%);
+            box-shadow: 0 18px 40px rgba(224, 82, 121, 0.18), inset 0 0 0 1px rgba(255, 182, 193, 0.45);
+        }
+
+        /* Stage 5: Fullscreen Starry Night Finale */
+        .stage-finale-fullscreen {
+            position: fixed;
+            inset: 0;
+            width: 100vw;
+            height: 100vh;
+            margin: 0;
+            border-radius: 0;
+            border: none;
+            background: linear-gradient(135deg, #fff0f5 0%, #ffe5ec 50%, #ffd6e7 100%);
+            transition: background 4.5s cubic-bezier(0.25, 0.1, 0.25, 1);
+            z-index: 9999;
+            padding: 2rem;
+            overflow: hidden;
+        }
+
+        .stage-finale-fullscreen.active {
+            display: flex;
+            opacity: 1;
+            transform: none;
+        }
+
+        .stage-finale-fullscreen.starry-night {
+            background: radial-gradient(ellipse at bottom, #1b1734 0%, #0d0a1a 60%, #05030a 100%);
+        }
+
+        .starfield-layer {
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 5s ease-in;
+            z-index: 1;
+        }
+
+        .stage-finale-fullscreen.starry-night .starfield-layer {
+            opacity: 1;
+        }
+
+        .night-star {
+            position: absolute;
+            background: #ffffff;
+            border-radius: 50%;
+            box-shadow: 0 0 6px rgba(255, 255, 255, 0.85), 0 0 12px rgba(255, 194, 209, 0.55);
+            animation: starTwinkle ease-in-out infinite alternate;
+        }
+
+        @keyframes starTwinkle {
+            0% {
+                opacity: 0.25;
+                transform: scale(0.8);
+            }
+            100% {
+                opacity: 1;
+                transform: scale(1.25);
+            }
+        }
+
+        .finale-line {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 1.5rem;
+            opacity: 0;
+            transform: translateY(14px);
+            pointer-events: none;
+            transition: opacity 1.3s ease, transform 1.3s ease;
+        }
+
+        .finale-line.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .finale-line.fade-out {
+            opacity: 0;
+            transform: translateY(-14px);
+        }
+
+        /* Burst Heart Particle */
+        .burst-heart {
+            position: fixed;
+            pointer-events: none;
+            z-index: 100;
+            animation: burstOut 1.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        @keyframes burstOut {
+            0% {
+                opacity: 1;
+                transform: translate(0, 0) scale(0.5) rotate(0deg);
+            }
+            100% {
+                opacity: 0;
+                transform: translate(var(--tx), var(--ty)) scale(1.4) rotate(var(--rot));
+            }
+        }
+    </style>
+</head>
+<body class="flex items-center justify-center p-4 sm:p-6 relative">
+
+    <!-- Persistent Cute Back Button (Hidden on Stage 1, Visible on Stages 2-5) -->
+    <button id="backBtn" onclick="goBack()" aria-label="Go back to previous page"
+            class="back-btn hidden-back px-4 py-2.5 rounded-full font-bold text-sm flex items-center gap-1.5 cursor-pointer">
+        <span>←</span>
+        <span>Back</span>
+    </button>
+
+    <!-- Floating Hearts Background -->
+    <div id="floatingHearts" class="floating-hearts-bg"></div>
+
+    <!-- Main Centered App Container -->
+    <main id="mainContainer" class="w-full max-w-2xl mx-auto relative z-10">
+
+        <!-- =================================================================
+             STAGE 1: PINK BACKGROUND & GIGGLING MEME CAT
+             ================================================================= -->
+        <section id="stage1" class="stage active flex-col items-center text-center glass-card rounded-3xl p-7 sm:p-10 max-w-lg mx-auto">
+            <span class="inline-block px-4 py-1 rounded-full bg-pink-100 text-pink-600 text-xs font-bold tracking-wider uppercase mb-4 shadow-sm">
+                Psst... A Little Secret
+            </span>
+
+            <!-- Cute Giggling Meme Cat SVG Illustration -->
+            <div class="relative w-56 h-52 mx-auto my-2 flex items-center justify-center">
+                <!-- Floating Giggle Text Bubbles -->
+                <span class="giggle-text-1 absolute top-2 left-2 bg-white/90 text-pink-500 font-bold text-sm px-3 py-1 rounded-2xl shadow-sm border border-pink-200">
+                    teehee~ 🤭
+                </span>
+                <span class="giggle-text-2 absolute top-6 right-1 bg-white/90 text-pink-500 font-bold text-sm px-3 py-1 rounded-2xl shadow-sm border border-pink-200">
+                    hehehe 💕
+                </span>
+
+                <!-- Animated Cat Vector -->
+                <svg viewBox="0 0 220 200" class="w-48 h-44 cat-bounce overflow-visible">
+                    <!-- Soft Shadow -->
+                    <ellipse cx="110" cy="185" rx="65" ry="12" fill="rgba(251, 111, 146, 0.25)" />
+                    
+                    <!-- Tail -->
+                    <path d="M162 155 Q195 140 185 112 Q178 95 168 110" fill="none" stroke="#fff" stroke-width="14" stroke-linecap="round"/>
+                    <path d="M162 155 Q195 140 185 112 Q178 95 168 110" fill="none" stroke="#ffd6e7" stroke-width="14" stroke-linecap="round" stroke-dasharray="10 18"/>
+
+                    <!-- Chubby Cat Body -->
+                    <ellipse cx="110" cy="142" rx="56" ry="44" fill="#ffffff" stroke="#ffb3c6" stroke-width="3"/>
+                    
+                    <!-- Cat Ears -->
+                    <polygon points="55,82 48,30 92,62" fill="#ffffff" stroke="#ffb3c6" stroke-width="3" stroke-linejoin="round"/>
+                    <polygon points="60,74 55,41 83,63" fill="#ffccd5"/>
+                    
+                    <polygon points="165,82 172,30 128,62" fill="#ffffff" stroke="#ffb3c6" stroke-width="3" stroke-linejoin="round"/>
+                    <polygon points="160,74 165,41 137,63" fill="#ffccd5"/>
+
+                    <!-- Cat Head -->
+                    <ellipse cx="110" cy="92" rx="62" ry="50" fill="#ffffff" stroke="#ffb3c6" stroke-width="3"/>
+
+                    <!-- Cute Head Patch -->
+                    <path d="M88 45 Q110 62 132 45 Q110 40 88 45 Z" fill="#ffe5ec"/>
+
+                    <!-- Happy Squinting Giggle Eyes (^ ^) -->
+                    <path d="M72 86 Q83 72 94 86" fill="none" stroke="#592e3b" stroke-width="4.5" stroke-linecap="round"/>
+                    <path d="M126 86 Q137 72 148 86" fill="none" stroke="#592e3b" stroke-width="4.5" stroke-linecap="round"/>
+
+                    <!-- Rosy Blushing Cheeks -->
+                    <ellipse cx="68" cy="100" rx="12" ry="7" fill="#ff8fab" opacity="0.55"/>
+                    <ellipse cx="152" cy="100" rx="12" ry="7" fill="#ff8fab" opacity="0.55"/>
+
+                    <!-- Tiny Pink Nose -->
+                    <polygon points="105,96 115,96 110,102" fill="#fb6f92"/>
+
+                    <!-- Giggling Open Mouth -->
+                    <path d="M98 106 Q110 125 122 106 Z" fill="#fb6f92" stroke="#592e3b" stroke-width="2.5" stroke-linejoin="round"/>
+                    <path d="M103 114 Q110 120 117 114" fill="#ffccd5"/>
+
+                    <!-- Whiskers -->
+                    <line x1="38" y1="92" x2="56" y2="95" stroke="#ffb3c6" stroke-width="2.5" stroke-linecap="round"/>
+                    <line x1="36" y1="104" x2="55" y2="103" stroke="#ffb3c6" stroke-width="2.5" stroke-linecap="round"/>
+                    <line x1="182" y1="92" x2="164" y2="95" stroke="#ffb3c6" stroke-width="2.5" stroke-linecap="round"/>
+                    <line x1="184" y1="104" x2="165" y2="103" stroke="#ffb3c6" stroke-width="2.5" stroke-linecap="round"/>
+
+                    <!-- Cute Giggling Paws Covering Mouth -->
+                    <g class="paw-giggle">
+                        <ellipse cx="94" cy="122" rx="16" ry="14" fill="#ffffff" stroke="#ffb3c6" stroke-width="3"/>
+                        <circle cx="94" cy="121" r="4" fill="#ffccd5"/>
+                        <circle cx="88" cy="116" r="2.5" fill="#ffccd5"/>
+                        <circle cx="94" cy="114" r="2.5" fill="#ffccd5"/>
+                        <circle cx="100" cy="116" r="2.5" fill="#ffccd5"/>
+                    </g>
+                    <g class="paw-giggle" style="animation-delay: 0.14s;">
+                        <ellipse cx="126" cy="122" rx="16" ry="14" fill="#ffffff" stroke="#ffb3c6" stroke-width="3"/>
+                        <circle cx="126" cy="121" r="4" fill="#ffccd5"/>
+                        <circle cx="120" cy="116" r="2.5" fill="#ffccd5"/>
+                        <circle cx="126" cy="114" r="2.5" fill="#ffccd5"/>
+                        <circle cx="132" cy="116" r="2.5" fill="#ffccd5"/>
+                    </g>
+                </svg>
+            </div>
+
+            <h1 class="text-2xl sm:text-3xl font-bold text-pink-700 mt-2">
+                Hi dear i hope you like this little surprise ✨
+            </h1>
+            <p class="text-pink-600/80 text-sm sm:text-base mt-2 mb-6 max-w-sm">
+                Tap the cat to hear it giggle, or press the button below when you're ready to unlock your surprise!
+            </p>
+
+            <div class="flex flex-wrap gap-3 justify-center w-full">
+                <button onclick="playGiggleSound(event)" class="px-5 py-3 rounded-2xl bg-white/90 text-pink-600 font-bold border-2 border-pink-200 hover:bg-pink-50 transition shadow-sm">
+                    🤭 Giggle
+                </button>
+                <button onclick="goToStage(2)" class="btn-cute px-8 py-3 rounded-2xl font-bold text-base tracking-wide">
+                    Open Surprise ✨
+                </button>
+            </div>
+        </section>
+
+        <!-- =================================================================
+             STAGE 2: HEART-SHAPED PADLOCK (PASSCODE: 0330)
+             ================================================================= -->
+        <section id="stage2" class="stage flex-col items-center text-center glass-card rounded-3xl p-6 sm:p-9 max-w-lg mx-auto">
+            <span class="inline-block px-4 py-1 rounded-full bg-pink-100 text-pink-600 text-xs font-bold tracking-wider uppercase mb-3">
+                Step 1 • Secret Passcode
+            </span>
+
+            <!-- Heart-Shaped Padlock SVG -->
+            <div id="padlockWrapper" class="relative w-44 h-44 mx-auto my-1 flex items-center justify-center transition-transform">
+                <svg viewBox="0 0 200 200" class="w-44 h-44 overflow-visible drop-shadow-md">
+                    <defs>
+                        <linearGradient id="heartLockGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" stop-color="#ff8fab" />
+                            <stop offset="50%" stop-color="#fb6f92" />
+                            <stop offset="100%" stop-color="#e05279" />
+                        </linearGradient>
+                        <linearGradient id="shackleGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                            <stop offset="0%" stop-color="#f8f9fa" />
+                            <stop offset="50%" stop-color="#e9ecef" />
+                            <stop offset="100%" stop-color="#dee2e6" />
+                        </linearGradient>
+                    </defs>
+
+                    <!-- Metallic Padlock Shackle -->
+                    <path class="shackle" d="M 65 88 L 65 52 A 35 35 0 0 1 135 52 L 135 88" 
+                          fill="none" stroke="url(#shackleGrad)" stroke-width="14" stroke-linecap="round" />
+                    <path class="shackle" d="M 65 88 L 65 52 A 35 35 0 0 1 135 52 L 135 88" 
+                          fill="none" stroke="#ffb3c6" stroke-width="2" stroke-linecap="round" />
+
+                    <!-- Heart-Shaped Lock Body -->
+                    <path d="M 100 182 C 100 182 22 132 22 82 C 22 54 44 36 68 36 C 84 36 95 45 100 54 C 105 45 116 36 132 36 C 156 36 178 54 178 82 C 178 132 100 182 100 182 Z" 
+                          fill="url(#heartLockGrad)" stroke="#ffffff" stroke-width="4" />
+
+                    <!-- Glossy Highlight on Heart -->
+                    <path d="M 42 75 C 42 58 55 48 68 48" fill="none" stroke="rgba(255,255,255,0.65)" stroke-width="5" stroke-linecap="round" />
+
+                    <!-- Keyhole Center -->
+                    <circle cx="100" cy="96" r="10" fill="#592e3b" />
+                    <path d="M 95 102 L 92 124 L 108 124 L 105 102 Z" fill="#592e3b" />
+                </svg>
+            </div>
+
+            <h2 class="text-xl sm:text-2xl font-bold text-pink-700">Unlock My Heart</h2>
+            <p id="lockHint" class="text-pink-600/80 text-xs sm:text-sm mt-1 mb-4">
+                Enter our special 4-digit date passcode 💖
+            </p>
+
+            <!-- 4-Digit Passcode Display Boxes -->
+            <div class="flex justify-center gap-3 mb-5">
+                <div id="digit-0" class="w-12 h-14 rounded-2xl bg-white border-2 border-pink-300 flex items-center justify-center text-2xl font-bold text-pink-600 shadow-inner">•</div>
+                <div id="digit-1" class="w-12 h-14 rounded-2xl bg-white border-2 border-pink-300 flex items-center justify-center text-2xl font-bold text-pink-600 shadow-inner">•</div>
+                <div id="digit-2" class="w-12 h-14 rounded-2xl bg-white border-2 border-pink-300 flex items-center justify-center text-2xl font-bold text-pink-600 shadow-inner">•</div>
+                <div id="digit-3" class="w-12 h-14 rounded-2xl bg-white border-2 border-pink-300 flex items-center justify-center text-2xl font-bold text-pink-600 shadow-inner">•</div>
+            </div>
+
+            <!-- Cute Numeric Keypad -->
+            <div class="grid grid-cols-3 gap-2.5 w-full max-w-[260px] mx-auto">
+                <button onclick="pressDigit('1')" class="keypad-btn py-3 rounded-2xl font-bold text-lg">1</button>
+                <button onclick="pressDigit('2')" class="keypad-btn py-3 rounded-2xl font-bold text-lg">2</button>
+                <button onclick="pressDigit('3')" class="keypad-btn py-3 rounded-2xl font-bold text-lg">3</button>
+                <button onclick="pressDigit('4')" class="keypad-btn py-3 rounded-2xl font-bold text-lg">4</button>
+                <button onclick="pressDigit('5')" class="keypad-btn py-3 rounded-2xl font-bold text-lg">5</button>
+                <button onclick="pressDigit('6')" class="keypad-btn py-3 rounded-2xl font-bold text-lg">6</button>
+                <button onclick="pressDigit('7')" class="keypad-btn py-3 rounded-2xl font-bold text-lg">7</button>
+                <button onclick="pressDigit('8')" class="keypad-btn py-3 rounded-2xl font-bold text-lg">8</button>
+                <button onclick="pressDigit('9')" class="keypad-btn py-3 rounded-2xl font-bold text-lg">9</button>
+                <button onclick="clearDigits()" class="keypad-btn py-3 rounded-2xl font-semibold text-xs uppercase tracking-wider text-pink-400">Clear</button>
+                <button onclick="pressDigit('0')" class="keypad-btn py-3 rounded-2xl font-bold text-lg">0</button>
+                <button onclick="backspaceDigit()" class="keypad-btn py-3 rounded-2xl font-bold text-base">⌫</button>
+            </div>
+        </section>
+
+        <!-- =================================================================
+             STAGE 3: MUSIC PLAYER TEMPLATE
+             ================================================================= -->
+        <section id="stage3" class="stage flex-col items-center text-center glass-card rounded-3xl p-7 sm:p-9 max-w-lg mx-auto">
+            <span class="inline-block px-4 py-1 rounded-full bg-pink-100 text-pink-600 text-xs font-bold tracking-wider uppercase mb-4">
+                Step 2 • Our Soundtrack
+            </span>
+
+            <!-- ==============================================================
+                 HOW TO ADD YOUR OWN SONG MANUALLY:
+                 1. Place your .mp3 audio file in the same folder as this HTML file
+                    (for example: "song.mp3").
+                 2. Replace src="" inside the <audio> tag below with your filename:
+                    <audio id="bgAudio" src="song.mp3" preload="metadata"></audio>
+                 3. Update the Song Title and Artist text right below!
+                 (Note: If no .mp3 file is set yet, a sweet built-in music-box melody
+                 plays automatically so you can test everything right away!)
+                 ============================================================== -->
+            <audio id="bgAudio" src="song.mp3" preload="metadata"></audio>
+
+            <!-- Cute Spinning Vinyl Record Visual -->
+            <div class="relative w-44 h-44 mx-auto my-2 flex items-center justify-center">
+                <div id="vinylDisc" class="w-40 h-40 rounded-full bg-gradient-to-tr from-pink-900 via-pink-700 to-pink-800 shadow-xl flex items-center justify-center border-4 border-pink-200 relative">
+                    <!-- Vinyl Grooves -->
+                    <div class="w-32 h-32 rounded-full border border-pink-400/30 flex items-center justify-center">
+                        <div class="w-24 h-24 rounded-full border border-pink-400/30 flex items-center justify-center">
+                            <!-- Center Heart Label -->
+                            <div class="w-16 h-16 rounded-full bg-gradient-to-br from-pink-200 to-pink-400 flex items-center justify-center shadow-inner border-2 border-white">
+                                <span class="text-2xl">💖</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Song Info (Edit Song Title & Artist Here!) -->
+            <h2 class="text-xl sm:text-2xl font-bold text-pink-700 mt-3">
+                A Song That Reminds Me of You
+            </h2>
+            <p class="text-pink-500 text-sm font-medium mt-0.5">
+                Dedicated to Czarina Mon 🎶
+            </p>
+
+            <!-- Progress Bar -->
+            <div class="w-full max-w-xs mx-auto mt-5">
+                <div class="w-full h-2.5 bg-pink-100 rounded-full overflow-hidden border border-pink-200">
+                    <div id="musicProgress" class="h-full bg-gradient-to-r from-pink-400 to-pink-600 w-0 transition-all duration-300 rounded-full"></div>
+                </div>
+                <div class="flex justify-between text-xs text-pink-500 font-semibold mt-1.5">
+                    <span id="currentTime">0:00</span>
+                    <span id="musicStatusText">Press play to listen first 💕</span>
+                </div>
+            </div>
+
+            <!-- Play / Pause Control -->
+            <div class="mt-5 flex items-center justify-center gap-4">
+                <button id="playPauseBtn" onclick="toggleMusic()" class="w-16 h-16 rounded-full btn-cute flex items-center justify-center text-2xl shadow-lg">
+                    ▶
+                </button>
+            </div>
+
+            <!-- Continue Button (Unlocks after playing the song) -->
+            <div class="mt-6 w-full">
+                <button id="musicContinueBtn" onclick="goToStage(4)" disabled class="btn-cute w-full max-w-xs py-3.5 rounded-2xl font-bold text-base">
+                    🔒 Play Song to Continue
+                </button>
+            </div>
+        </section>
+
+        <!-- =================================================================
+             STAGE 4: HEART-SEALED ENVELOPE & SCROLLABLE LONG LETTER
+             ================================================================= -->
+        <section id="stage4" class="stage flex-col items-center text-center glass-card rounded-3xl p-6 sm:p-10 w-full max-w-2xl mx-auto">
+            <span class="inline-block px-4 py-1 rounded-full bg-pink-100 text-pink-600 text-xs font-bold tracking-wider uppercase mb-3">
+                Step 3 • For Your Eyes Only
+            </span>
+
+            <!-- Closed Envelope View -->
+            <div id="envelopeView" class="w-full py-5">
+                <h2 class="text-2xl sm:text-3xl font-bold text-pink-700 mb-2">
+                    You Have a Letter! 💌
+                </h2>
+                <p class="text-pink-600/80 text-sm sm:text-base mb-8">
+                    Tap the heart seal in the middle to open your letter...
+                </p>
+
+                <div class="envelope-scene py-2">
+                    <div id="envelopeBox" onclick="openEnvelope()" class="envelope-wrapper">
+                        <div class="envelope-back"></div>
+                        <div class="envelope-flap"></div>
+
+                        <!-- Paper Preview Popping Out of the Envelope -->
+                        <div class="envelope-letter-peek">
+                            <p class="font-romantic text-2xl text-pink-600 font-bold mb-1">
+                                Dearest Czarina Mon,
+                            </p>
+                            <p class="text-pink-900/75 text-xs sm:text-sm leading-relaxed">
+                                From the very first moment we started talking, something inside me quietly changed. Every notification from you, every laugh we share, and every little detail about you has slowly become my favorite part of every single day...
+                            </p>
+                        </div>
+
+                        <div class="envelope-pocket"></div>
+                        
+                        <!-- Center Glossy Heart Sticker -->
+                        <div class="heart-seal">
+                            <svg viewBox="0 0 100 100" class="w-24 h-24 sm:w-28 sm:h-28">
+                                <defs>
+                                    <radialGradient id="sealGrad" cx="35%" cy="35%" r="65%">
+                                        <stop offset="0%" stop-color="#ff4d6d" />
+                                        <stop offset="70%" stop-color="#c9184a" />
+                                        <stop offset="100%" stop-color="#a4133c" />
+                                    </radialGradient>
+                                </defs>
+                                <path d="M50 88 C50 88 10 60 10 32 C10 16 23 6 36 6 C44 6 48 11 50 16 C52 11 56 6 64 6 C77 6 90 16 90 32 C90 60 50 88 50 88 Z" 
+                                      fill="url(#sealGrad)" stroke="#fff0f5" stroke-width="3"/>
+                                <path d="M24 28 C24 20 30 16 36 16" fill="none" stroke="rgba(255,255,255,0.6)" stroke-width="3.5" stroke-linecap="round"/>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pop-out Long Scrollable Letter Paper -->
+            <div id="letterView" class="letter-paper-container w-full text-left">
+                <div class="letter-paper rounded-2xl p-7 sm:p-10 max-h-[68vh] overflow-y-auto letter-scroll border-2 border-pink-200">
+                    
+                    <!-- ======================================================
+                         HOW TO EDIT YOUR LETTER MANUALLY:
+                         Simply replace the paragraphs below inside <div id="customLetterContent">
+                         with whatever heartfelt message you want to tell Czarina!
+                         You can add as many <p>...</p> paragraphs as you like—the
+                         paper will automatically scroll up and down smoothly.
+                         ====================================================== -->
+                    <div id="customLetterContent" class="text-pink-950 text-lg sm:text-xl space-y-5">
+                        <p class="font-romantic text-4xl text-pink-600 font-bold">
+                            Dearest Czarina Mon,
+                        </p>
+
+                        <p>
+                            From the very first moment we started talking, something inside me quietly changed. Every notification from you, every laugh we share, and every little detail about you has slowly become my favorite part of every single day.
+                        </p>
+
+                        <p>
+                            I made this little corner of the internet just for you because ordinary words didn't feel enough to show how much I appreciate you. Your kindness, your smile, and the warmth you bring into my life mean more to me than you could ever know.
+                        </p>
+
+                        <p>
+                            Whenever I'm with you—or even just thinking about you—everything feels lighter, brighter, and happier. You inspire me to be better, to care deeper, and to cherish every moment we get to spend together.
+                        </p>
+
+                        <p>
+                            I may not be perfect, but I'll always do my best to give you the love that you deserve, and I want you to know how committed I am to you.
+                        </p>
+
+                        <p>
+                            Grabe noh? HAHAHA siguro ginayuma mo 'ko nohh (eme). But anyways...
+                        </p>
+
+                        <p>
+                            Thank you for being so wonderfully you. Before this ends, there is just one more thing my heart has been wanting to ask you...
+                        </p>
+
+                        <p class="font-romantic text-3xl text-pink-600 font-bold pt-2">
+                            Always admiring you, ❤️
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Continue to Finale Button -->
+                <div class="mt-7 text-center">
+                    <button onclick="startFinale()" class="btn-cute px-9 py-4 rounded-2xl font-bold text-lg shadow-lg">
+                        Continue to the Last Part ✨
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- =================================================================
+             STAGE 5: STARRY NIGHT FULLSCREEN FINALE REVEAL
+             ================================================================= -->
+        <section id="stage5" class="stage stage-finale-fullscreen flex-col items-center justify-center text-center">
+            <!-- Twinkling Stars Container -->
+            <div id="starfieldLayer" class="starfield-layer"></div>
+
+            <!-- Sequential Fade-In / Fade-Out Simple Reveal -->
+            <div id="finaleSequenceBox" class="relative w-full max-w-3xl h-full flex items-center justify-center z-10">
+                <!-- Step 1: Fades in, then fades out -->
+                <div id="finaleLine1" class="finale-line">
+                    <p class="text-xl sm:text-3xl font-semibold tracking-wider text-pink-200 uppercase leading-relaxed max-w-xl drop-shadow-[0_2px_12px_rgba(255,143,171,0.45)]">
+                        AFTER ALL THAT I SAID, I WANT TO ASK YOU SOMETHING
+                    </p>
+                </div>
+
+                <!-- Step 2: Fades in, then fades out -->
+                <div id="finaleLine2" class="finale-line">
+                    <h1 class="font-romantic text-5xl sm:text-7xl font-bold text-pink-300 drop-shadow-[0_0_20px_rgba(255,143,171,0.65)]">
+                        CZARINA MON
+                    </h1>
+                </div>
+
+                <!-- Step 3: Simple final question with gentle note underneath -->
+                <div id="finaleLine3" class="finale-line">
+                    <h2 class="text-3xl sm:text-5xl font-bold text-white tracking-wide leading-tight drop-shadow-[0_0_24px_rgba(255,182,193,0.75)]">
+                        CAN I COURT YOU?
+                    </h2>
+                    <p class="mt-4 text-base sm:text-lg text-pink-200/90 font-medium italic">
+                        (take all the time you need dear)
+                    </p>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- =================================================================
+         JAVASCRIPT LOGIC & SOUND SYNTHESIZER
+         ================================================================= -->
+    <script>
+        /* -----------------------------------------------------------------
+           1. FLOATING BACKGROUND HEARTS & STARFIELD GENERATOR
+           ----------------------------------------------------------------- */
+        (function initFloatingHearts() {
+            const container = document.getElementById('floatingHearts');
+            if (!container) return;
+            const heartChars = ['💖', '💕', '💗', '💓', '🌸', '✨'];
+            for (let i = 0; i < 22; i++) {
+                const el = document.createElement('span');
+                el.className = 'bg-heart';
+                el.textContent = heartChars[i % heartChars.length];
+                el.style.left = Math.random() * 100 + 'vw';
+                el.style.fontSize = (Math.random() * 14 + 14) + 'px';
+                el.style.animationDuration = (Math.random() * 8 + 8) + 's';
+                el.style.animationDelay = (Math.random() * 8) + 's';
+                container.appendChild(el);
+            }
+        })();
+
+        (function initStarfield() {
+            const starfield = document.getElementById('starfieldLayer');
+            if (!starfield) return;
+            for (let i = 0; i < 110; i++) {
+                const star = document.createElement('span');
+                star.className = 'night-star';
+                const size = Math.random() * 2.5 + 1;
+                star.style.width = size + 'px';
+                star.style.height = size + 'px';
+                star.style.left = Math.random() * 100 + '%';
+                star.style.top = Math.random() * 100 + '%';
+                star.style.animationDuration = (Math.random() * 2.5 + 1.5) + 's';
+                star.style.animationDelay = (Math.random() * 3) + 's';
+                starfield.appendChild(star);
+            }
+        })();
+
+        /* -----------------------------------------------------------------
+           2. STAGE NAVIGATION & BACK BUTTON HELPER
+           ----------------------------------------------------------------- */
+        let currentStage = 1;
+        let audioCtx = null;
+        let finaleTimers = [];
+
+        function getAudioContext() {
+            if (!audioCtx) {
+                const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+                audioCtx = new AudioContextClass();
+            }
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+            return audioCtx;
+        }
+
+        function spawnHeartBurst(x, y) {
+            const hearts = ['💖', '💕', '💗', '✨', '🌸'];
+            const originX = x || window.innerWidth / 2;
+            const originY = y || window.innerHeight / 2;
+
+            for (let i = 0; i < 10; i++) {
+                const el = document.createElement('span');
+                el.className = 'burst-heart';
+                el.textContent = hearts[i % hearts.length];
+                el.style.left = originX + 'px';
+                el.style.top = originY + 'px';
+                el.style.fontSize = (Math.random() * 12 + 16) + 'px';
+
+                const angle = (Math.PI * 2 * i) / 10 + (Math.random() * 0.4);
+                const dist = Math.random() * 85 + 45;
+                el.style.setProperty('--tx', Math.cos(angle) * dist + 'px');
+                el.style.setProperty('--ty', Math.sin(angle) * dist - 30 + 'px');
+                el.style.setProperty('--rot', (Math.random() * 120 - 60) + 'deg');
+
+                document.body.appendChild(el);
+                setTimeout(() => el.remove(), 1450);
+            }
+        }
+
+        function updateBackButton(stageNum) {
+            const backBtn = document.getElementById('backBtn');
+            if (!backBtn) return;
+            if (stageNum <= 1) {
+                backBtn.classList.add('hidden-back');
+            } else {
+                backBtn.classList.remove('hidden-back');
+            }
+        }
+
+        function clearFinaleTimers() {
+            finaleTimers.forEach(t => clearTimeout(t));
+            finaleTimers = [];
+            const stage5 = document.getElementById('stage5');
+            if (stage5) stage5.classList.remove('starry-night');
+            ['finaleLine1', 'finaleLine2', 'finaleLine3'].forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.classList.remove('show', 'fade-out');
+            });
+        }
+
+        function goToStage(stageNum) {
+            // Hide all stages first
+            document.querySelectorAll('.stage').forEach(sec => {
+                sec.classList.remove('active');
+            });
+
+            // Reset stage-specific states when navigating
+            if (stageNum !== 5) {
+                clearFinaleTimers();
+            }
+            if (stageNum === 2) {
+                clearDigits();
+                const padlock = document.getElementById('padlockWrapper');
+                const hint = document.getElementById('lockHint');
+                if (padlock) padlock.classList.remove('padlock-unlocked', 'shake-lock');
+                if (hint) {
+                    hint.textContent = 'Enter our special 4-digit date passcode 💖';
+                    hint.classList.remove('text-red-500', 'font-semibold', 'font-bold');
+                }
+            }
+            if (stageNum === 4) {
+                const envelopeBox = document.getElementById('envelopeBox');
+                const envelopeView = document.getElementById('envelopeView');
+                const letterView = document.getElementById('letterView');
+                if (envelopeBox) envelopeBox.classList.remove('opened');
+                if (envelopeView) {
+                    envelopeView.style.display = 'block';
+                    envelopeView.classList.remove('fading-out');
+                }
+                if (letterView) {
+                    letterView.style.display = 'none';
+                    letterView.classList.remove('visible');
+                }
+            }
+
+            const target = document.getElementById('stage' + stageNum);
+            if (target) {
+                target.classList.add('active');
+                currentStage = stageNum;
+                updateBackButton(stageNum);
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+        }
+
+        function goBack() {
+            if (currentStage > 1) {
+                goToStage(currentStage - 1);
+            }
+        }
+
+        /* -----------------------------------------------------------------
+           3. STAGE 1: GIGGLE SOUND SYNTHESIZER
+           ----------------------------------------------------------------- */
+        function playGiggleSound(event) {
+            if (event) spawnHeartBurst(event.clientX, event.clientY);
+            try {
+                const ctx = getAudioContext();
+                const notes = [587.33, 783.99, 659.25, 880.00, 987.77]; // Playful high giggle notes
+                notes.forEach((freq, idx) => {
+                    const osc = ctx.createOscillator();
+                    const gain = ctx.createGain();
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(freq, ctx.currentTime + idx * 0.09);
+                    
+                    gain.gain.setValueAtTime(0.001, ctx.currentTime + idx * 0.09);
+                    gain.gain.exponentialRampToValueAtTime(0.14, ctx.currentTime + idx * 0.09 + 0.03);
+                    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + idx * 0.09 + 0.12);
+
+                    osc.connect(gain);
+                    gain.connect(ctx.destination);
+                    osc.start(ctx.currentTime + idx * 0.09);
+                    osc.stop(ctx.currentTime + idx * 0.09 + 0.13);
+                });
+            } catch (e) {
+                // Ignore audio block if browser restricts
+            }
+        }
+
+        /* -----------------------------------------------------------------
+           4. STAGE 2: HEART PADLOCK LOGIC (PASSCODE: 0330)
+           ----------------------------------------------------------------- */
+        const SECRET_CODE = '0330';
+        let enteredDigits = '';
+        let lockBusy = false;
+
+        function updateDigitBoxes() {
+            for (let i = 0; i < 4; i++) {
+                const box = document.getElementById('digit-' + i);
+                if (!box) continue;
+                if (i < enteredDigits.length) {
+                    box.textContent = enteredDigits[i];
+                    box.classList.add('border-pink-500', 'bg-pink-50');
+                } else {
+                    box.textContent = '•';
+                    box.classList.remove('border-pink-500', 'bg-pink-50');
+                }
+            }
+        }
+
+        function pressDigit(digit) {
+            if (lockBusy || enteredDigits.length >= 4) return;
+            enteredDigits += digit;
+            updateDigitBoxes();
+
+            if (enteredDigits.length === 4) {
+                verifyPasscode();
+            }
+        }
+
+        function backspaceDigit() {
+            if (lockBusy || enteredDigits.length === 0) return;
+            enteredDigits = enteredDigits.slice(0, -1);
+            updateDigitBoxes();
+        }
+
+        function clearDigits() {
+            enteredDigits = '';
+            lockBusy = false;
+            updateDigitBoxes();
+        }
+
+        function verifyPasscode() {
+            const padlock = document.getElementById('padlockWrapper');
+            const hint = document.getElementById('lockHint');
+            lockBusy = true;
+
+            if (enteredDigits === SECRET_CODE) {
+                if (padlock) padlock.classList.add('padlock-unlocked');
+                if (hint) {
+                    hint.textContent = 'Unlocked! You know my heart 💖';
+                    hint.classList.remove('text-red-500');
+                    hint.classList.add('text-pink-600', 'font-bold');
+                }
+                playGiggleSound();
+                setTimeout(() => {
+                    lockBusy = false;
+                    goToStage(3);
+                }, 1150);
+            } else {
+                if (padlock) {
+                    padlock.classList.remove('shake-lock');
+                    void padlock.offsetWidth;
+                    padlock.classList.add('shake-lock');
+                }
+                if (hint) {
+                    hint.textContent = 'Oops, wrong code! Try again (Hint: 0330) 💕';
+                    hint.classList.add('text-red-500', 'font-semibold');
+                }
+                setTimeout(() => {
+                    clearDigits();
+                }, 750);
+            }
+        }
+
+        /* -----------------------------------------------------------------
+           5. STAGE 3: MUSIC PLAYER & BUILT-IN MUSIC BOX FALLBACK
+           ----------------------------------------------------------------- */
+        let isPlayingMusic = false;
+        let hasUnlockedMusicContinue = false;
+        let synthInterval = null;
+        let synthProgress = 0;
+
+        function formatTime(secs) {
+            const m = Math.floor(secs / 60);
+            const s = Math.floor(secs % 60);
+            return m + ':' + (s < 10 ? '0' : '') + s;
+        }
+
+        function unlockMusicContinueButton() {
+            if (hasUnlockedMusicContinue) return;
+            hasUnlockedMusicContinue = true;
+            const continueBtn = document.getElementById('musicContinueBtn');
+            const statusText = document.getElementById('musicStatusText');
+            if (continueBtn) {
+                continueBtn.disabled = false;
+                continueBtn.textContent = 'Continue to Your Letter 💌';
+            }
+            if (statusText) {
+                statusText.textContent = 'Unlocked! Keep listening or continue 💕';
+            }
+        }
+
+        function startFallbackMelody() {
+            const melody = [523.25, 659.25, 783.99, 659.25, 698.46, 880.00, 783.99, 659.25];
+            let step = 0;
+
+            if (synthInterval) {
+                clearInterval(synthInterval);
+            }
+
+            synthInterval = setInterval(() => {
+                if (!isPlayingMusic) return;
+                try {
+                    const ctx = getAudioContext();
+                    const osc = ctx.createOscillator();
+                    const gain = ctx.createGain();
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(melody[step % melody.length], ctx.currentTime);
+                    gain.gain.setValueAtTime(0.001, ctx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.09, ctx.currentTime + 0.04);
+                    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.45);
+                    osc.connect(gain);
+                    gain.connect(ctx.destination);
+                    osc.start();
+                    osc.stop(ctx.currentTime + 0.46);
+                } catch (e) {}
+
+                step++;
+                synthProgress += 0.5;
+                const progressBar = document.getElementById('musicProgress');
+                const currentTimeEl = document.getElementById('currentTime');
+                const pct = Math.min((synthProgress / 20) * 100, 100);
+                if (progressBar) progressBar.style.width = pct + '%';
+                if (currentTimeEl) currentTimeEl.textContent = formatTime(synthProgress);
+
+                if (synthProgress >= 2.5) {
+                    unlockMusicContinueButton();
+                }
+            }, 500);
+        }
+
+        function toggleMusic() {
+            const audio = document.getElementById('bgAudio');
+            const btn = document.getElementById('playPauseBtn');
+            const disc = document.getElementById('vinylDisc');
+            const statusText = document.getElementById('musicStatusText');
+            const rawSrc = audio ? (audio.getAttribute('src') || '').trim() : '';
+            const hasCustomAudio = Boolean(audio && rawSrc !== '');
+
+            if (!isPlayingMusic) {
+                isPlayingMusic = true;
+                if (btn) btn.textContent = '⏸';
+                if (disc) disc.classList.add('vinyl-spinning');
+
+                if (hasCustomAudio) {
+                    if (statusText) statusText.textContent = 'Playing "' + rawSrc + '" 💕';
+                    audio.play().then(() => {
+                        unlockMusicContinueButton();
+                    }).catch((err) => {
+                        console.warn('Custom audio play failed, starting melody fallback:', err);
+                        if (statusText) {
+                            statusText.textContent = 'Using melody (check "' + rawSrc + '" file/Live Server)';
+                        }
+                        startFallbackMelody();
+                    });
+                } else {
+                    if (statusText) statusText.textContent = 'Playing sweet melody 💕';
+                    startFallbackMelody();
+                }
+            } else {
+                isPlayingMusic = false;
+                if (btn) btn.textContent = '▶';
+                if (disc) disc.classList.remove('vinyl-spinning');
+
+                if (hasCustomAudio) {
+                    audio.pause();
+                }
+                if (synthInterval) {
+                    clearInterval(synthInterval);
+                    synthInterval = null;
+                }
+            }
+        }
+
+        (function initAudioListeners() {
+            const audio = document.getElementById('bgAudio');
+            if (!audio) return;
+            audio.addEventListener('error', () => {
+                const statusText = document.getElementById('musicStatusText');
+                const rawSrc = (audio.getAttribute('src') || '').trim();
+                if (rawSrc && statusText) {
+                    statusText.textContent = 'Could not load "' + rawSrc + '" — check filename/folder';
+                }
+            });
+            audio.addEventListener('timeupdate', () => {
+                const progressBar = document.getElementById('musicProgress');
+                const currentTimeEl = document.getElementById('currentTime');
+                if (audio.duration) {
+                    const pct = (audio.currentTime / audio.duration) * 100;
+                    if (progressBar) progressBar.style.width = pct + '%';
+                }
+                if (currentTimeEl) currentTimeEl.textContent = formatTime(audio.currentTime);
+                if (audio.currentTime >= 2) {
+                    unlockMusicContinueButton();
+                }
+            });
+            audio.addEventListener('ended', () => {
+                isPlayingMusic = false;
+                const btn = document.getElementById('playPauseBtn');
+                const disc = document.getElementById('vinylDisc');
+                if (btn) btn.textContent = '▶';
+                if (disc) disc.classList.remove('vinyl-spinning');
+            });
+        })();
+
+        /* -----------------------------------------------------------------
+           6. STAGE 4: OPEN ENVELOPE & REVEAL SCROLLABLE LETTER
+           ----------------------------------------------------------------- */
+        function openEnvelope() {
+            const envelopeBox = document.getElementById('envelopeBox');
+            const envelopeView = document.getElementById('envelopeView');
+            const letterView = document.getElementById('letterView');
+
+            if (!envelopeBox || envelopeBox.classList.contains('opened')) return;
+            envelopeBox.classList.add('opened');
+            playGiggleSound();
+
+            // Let the flap open and the paper pop out first, then slowly fade out the envelope
+            setTimeout(() => {
+                if (envelopeView) envelopeView.classList.add('fading-out');
+            }, 1550);
+
+            // Slowly fade into viewing the full scrollable letter
+            setTimeout(() => {
+                if (envelopeView) envelopeView.style.display = 'none';
+                if (letterView) {
+                    letterView.style.display = 'block';
+                    requestAnimationFrame(() => {
+                        requestAnimationFrame(() => {
+                            letterView.classList.add('visible');
+                        });
+                    });
+                }
+            }, 2250);
+        }
+
+        /* -----------------------------------------------------------------
+           7. STAGE 5: STARRY NIGHT FADE-IN / FADE-OUT FINALE SEQUENCE
+           ----------------------------------------------------------------- */
+        function startFinale() {
+            goToStage(5);
+            clearFinaleTimers();
+
+            const stage5 = document.getElementById('stage5');
+            const line1 = document.getElementById('finaleLine1');
+            const line2 = document.getElementById('finaleLine2');
+            const line3 = document.getElementById('finaleLine3');
+
+            // Smoothly darken into a starry night sky right as Stage 5 opens
+            requestAnimationFrame(() => {
+                requestAnimationFrame(() => {
+                    if (stage5) stage5.classList.add('starry-night');
+                });
+            });
+
+            // Step 1: Fade in first message as the sky deepens into night
+            finaleTimers.push(setTimeout(() => {
+                if (line1) line1.classList.add('show');
+            }, 1800));
+
+            // Step 1 -> Fade out, Step 2 -> Fade in "CZARINA MON"
+            finaleTimers.push(setTimeout(() => {
+                if (line1) {
+                    line1.classList.remove('show');
+                    line1.classList.add('fade-out');
+                }
+            }, 5200));
+
+            finaleTimers.push(setTimeout(() => {
+                if (line2) line2.classList.add('show');
+                playGiggleSound();
+            }, 6400));
+
+            // Step 2 -> Fade out, Step 3 -> Fade in "CAN I COURT YOU?" under the stars
+            finaleTimers.push(setTimeout(() => {
+                if (line2) {
+                    line2.classList.remove('show');
+                    line2.classList.add('fade-out');
+                }
+            }, 9600));
+
+            finaleTimers.push(setTimeout(() => {
+                if (line3) line3.classList.add('show');
+            }, 10800));
+        }
+    </script>
+</body>
+</html>
